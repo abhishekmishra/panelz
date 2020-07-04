@@ -2,6 +2,9 @@ import numpy as np
 import graphics as g
 from fractions import Fraction
 
+from wand.image import Image
+from wand.drawing import Drawing
+from wand.color import Color
 
 class Panel:
     pass
@@ -129,6 +132,32 @@ class GraphicsPanelDisplay(PanelDisplay):
     def gRectangle(cls, r):
         return g.Rectangle(cls.gPoint(r.tl), cls.gPoint(r.br))
 
+class WandPanelDisplay(PanelDisplay):
+    def __init__(self, width=600, height=400):
+        super().__init__("Graphics Panel Display", width, height)
+        self.draw = Drawing()
+
+    def drawRectangle(self, r, outline_colour="black", outline_width=1, fill=None):
+        self.draw.stroke_color = Color(outline_colour)
+        self.draw.stroke_width = outline_width
+        self.draw.rectangle(left=r.tl.x, top=r.tl.y, right=r.br.x, bottom=r.br.y)
+
+    def show(self):
+        with Image(width=self.width,
+                height=self.height,
+                background=Color('lightblue')) as img:
+            self.draw.draw(img)
+            img.save(filename='draw-panel.gif')
+
+    @classmethod
+    def gPoint(cls, p):
+        return g.Point(p.x, p.y)
+
+    @classmethod
+    def gRectangle(cls, r):
+        return g.Rectangle(cls.gPoint(r.tl), cls.gPoint(r.br))
+
+
 
 OUTLINE_COLOURS = ["red", "blue", "magenta", "green"]
 
@@ -149,7 +178,7 @@ def Draw(panelDisplay, r, depth=0, scalex=None, scaley=None, offset_pct = Fracti
 
 
 if __name__ == "__main__":
-    panelDisplay = GraphicsPanelDisplay()
+    panelDisplay = WandPanelDisplay()
     r = Rectangle()
     r.vsplit()
     for rc in r.children:
