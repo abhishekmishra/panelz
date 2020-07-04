@@ -6,6 +6,11 @@ from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
 
+import svgwrite
+
+import webview
+
+
 class Panel:
     pass
 
@@ -147,16 +152,19 @@ class WandPanelDisplay(PanelDisplay):
                 height=self.height,
                 background=Color('lightblue')) as img:
             self.draw.draw(img)
-            img.save(filename='draw-panel.gif')
+            img.save(filename='draw-panel.svg')
 
-    @classmethod
-    def gPoint(cls, p):
-        return g.Point(p.x, p.y)
 
-    @classmethod
-    def gRectangle(cls, r):
-        return g.Rectangle(cls.gPoint(r.tl), cls.gPoint(r.br))
+class SVGPanelDisplay(PanelDisplay):
+    def __init__(self, width=600, height=400):
+        super().__init__("Graphics Panel Display", width, height)
+        self.dwg = svgwrite.Drawing('draw-panel.svg', size=(self.width, self.height), profile='tiny')
 
+    def drawRectangle(self, r, outline_colour="black", outline_width=1, fill=None):
+        self.dwg.add(self.dwg.rect(insert=(r.tl.x, r.tl.y), size=(r.width(), r.height()), stroke=outline_colour, stroke_width=outline_width))
+
+    def show(self):
+        self.dwg.save()
 
 
 OUTLINE_COLOURS = ["red", "blue", "magenta", "green"]
@@ -178,7 +186,7 @@ def Draw(panelDisplay, r, depth=0, scalex=None, scaley=None, offset_pct = Fracti
 
 
 if __name__ == "__main__":
-    panelDisplay = WandPanelDisplay()
+    panelDisplay = SVGPanelDisplay()
     r = Rectangle()
     r.vsplit()
     for rc in r.children:
@@ -187,3 +195,6 @@ if __name__ == "__main__":
             rcc.hsplit()
     Draw(panelDisplay, r)
     panelDisplay.show()
+
+    window = webview.create_window('Woah dude!', 'index.html')
+    webview.start(http_server=True)
