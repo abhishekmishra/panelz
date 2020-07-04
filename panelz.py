@@ -1,5 +1,5 @@
 import numpy as np
-import graphics as g
+#import graphics as g
 from fractions import Fraction
 
 from wand.image import Image
@@ -109,28 +109,28 @@ class PanelDisplay:
         pass
 
 
-class GraphicsPanelDisplay(PanelDisplay):
-    def __init__(self, width=600, height=400):
-        super().__init__("Graphics Panel Display", width, height)
-        self.win = g.GraphWin("Rectangles", self.width, self.height)
+# class GraphicsPanelDisplay(PanelDisplay):
+#     def __init__(self, width=600, height=400):
+#         super().__init__("Graphics Panel Display", width, height)
+#         self.win = g.GraphWin("Rectangles", self.width, self.height)
 
-    def drawRectangle(self, r, outline_colour="black", outline_width=1, fill=None):
-        gr = self.gRectangle(r)
-        gr.setOutline(outline_colour)
-        gr.setWidth(outline_width)
-        gr.draw(self.win)
+#     def drawRectangle(self, r, outline_colour="black", outline_width=1, fill=None):
+#         gr = self.gRectangle(r)
+#         gr.setOutline(outline_colour)
+#         gr.setWidth(outline_width)
+#         gr.draw(self.win)
 
-    def show(self):
-        self.win.getMouse()  # pause for click in window
-        self.win.close()
+#     def show(self):
+#         self.win.getMouse()  # pause for click in window
+#         self.win.close()
 
-    @classmethod
-    def gPoint(cls, p):
-        return g.Point(p.x, p.y)
+#     @classmethod
+#     def gPoint(cls, p):
+#         return g.Point(p.x, p.y)
 
-    @classmethod
-    def gRectangle(cls, r):
-        return g.Rectangle(cls.gPoint(r.tl), cls.gPoint(r.br))
+#     @classmethod
+#     def gRectangle(cls, r):
+#         return g.Rectangle(cls.gPoint(r.tl), cls.gPoint(r.br))
 
 class WandPanelDisplay(PanelDisplay):
     def __init__(self, width=600, height=400):
