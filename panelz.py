@@ -11,10 +11,6 @@ import svgwrite
 import webview
 
 
-class Panel:
-    pass
-
-
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -53,7 +49,7 @@ class Rectangle:
                 # they return absolutes, we need sign as well here
                 h = (self.br.y - self.tl.y) * ratios[i]
                 self.children.append(
-                    Rectangle(start, Point(self.br.x, start.y + h), name = self.name + "_A" + str(i)))
+                    Rectangle(start, Point(self.br.x, start.y + h), name=self.name + "_A" + str(i)))
                 start = Point(start.x, start.y + h)
         else:
             print(
@@ -71,7 +67,7 @@ class Rectangle:
                 # they return absolutes, we need sign as well here
                 w = (self.br.x - self.tl.x) * ratios[i]
                 self.children.append(
-                    Rectangle(start, Point(start.x + w, self.br.y), name = self.name + "_" + chr(ord('A') + i) + "0"))
+                    Rectangle(start, Point(start.x + w, self.br.y), name=self.name + "_" + chr(ord('A') + i) + "0"))
                 start = Point(start.x + w, start.y)
         else:
             print(
@@ -163,7 +159,7 @@ class SVGPanelDisplay(PanelDisplay):
     def __init__(self, width=400, height=600):
         super().__init__("Graphics Panel Display", width, height)
         self.dwg = svgwrite.Drawing(
-            'draw-panel.svg', size=(self.width, self.height), profile='tiny', 
+            'draw-panel.svg', size=(self.width, self.height), profile='tiny',
             viewBox=('0 0 ' + str(self.width) + ' ' + str(self.height)),
             preserveAspectRatio="xMidYMid meet")
 
@@ -195,16 +191,53 @@ def Draw(panelDisplay, r, depth=0, scalex=None, scaley=None, offset_pct=Fraction
                  scalex=scalex, scaley=scaley)
 
 
+def CreateGrid(nrow, ncol):
+    r = Rectangle()
+    r.hsplit(nrow)
+    for rc in r.children:
+        rc.vsplit(ncol)
+    return r
+
+
+def FlattenGrid(r):
+    gridmap = {}
+    gridmap[r.name] = r
+    if r.hasCols or r.hasRows:
+        for rc in r.children:
+            gridmap.update(FlattenGrid(rc))
+    return gridmap
+
+
+class Page:
+    def __init__(self, grid):
+        self.panels = {}
+        self.panelCount = 0
+        self.gridmap = FlattenGrid(grid)
+
+    def addPanel(self):
+        nm = "p" + str(self.panelCount)
+        self.panels[nm] = Panel(nm)
+        self.panelCount += 1
+
+    def addRectangleToPanel(self, panel, rect):
+        self.panels[panel].addRect(rect, self.gridmap[rect])
+
+
+class Panel:
+    def __init__(self, name):
+        self.rects = {}
+        self.name = name
+
+    def addRect(self, rname, rect):
+        self.rects[rname] = rect
+
+
 if __name__ == "__main__":
     panelDisplay = SVGPanelDisplay()
-    r = Rectangle()
-    r.vsplit()
-    for rc in r.children:
-        rc.vsplit()
-        for rcc in rc.children:
-            rcc.hsplit()
+    r = CreateGrid(5, 4)
     Draw(panelDisplay, r)
     panelDisplay.show()
 
-    window = webview.create_window('Panelz: Make comic panels easily!', 'index.html')
+    window = webview.create_window(
+        'Panelz: Make comic panels easily!', 'index.html')
     webview.start(http_server=True)
