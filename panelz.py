@@ -137,6 +137,8 @@ class PanelDisplay:
 #     def gRectangle(cls, r):
 #         return g.Rectangle(cls.gPoint(r.tl), cls.gPoint(r.br))
 
+# Not using this since ImageMagick does not seem to produce
+# correct svg output.
 class WandPanelDisplay(PanelDisplay):
     def __init__(self, width=600, height=400):
         super().__init__("Graphics Panel Display", width, height)
@@ -145,23 +147,28 @@ class WandPanelDisplay(PanelDisplay):
     def drawRectangle(self, r, outline_colour="black", outline_width=1, fill=None):
         self.draw.stroke_color = Color(outline_colour)
         self.draw.stroke_width = outline_width
-        self.draw.rectangle(left=r.tl.x, top=r.tl.y, right=r.br.x, bottom=r.br.y)
+        self.draw.rectangle(left=r.tl.x, top=r.tl.y,
+                            right=r.br.x, bottom=r.br.y)
 
     def show(self):
         with Image(width=self.width,
-                height=self.height,
-                background=Color('lightblue')) as img:
+                   height=self.height,
+                   background=Color('lightblue')) as img:
             self.draw.draw(img)
             img.save(filename='draw-panel.svg')
 
 
 class SVGPanelDisplay(PanelDisplay):
-    def __init__(self, width=600, height=400):
+    def __init__(self, width=400, height=600):
         super().__init__("Graphics Panel Display", width, height)
-        self.dwg = svgwrite.Drawing('draw-panel.svg', size=(self.width, self.height), profile='tiny')
+        self.dwg = svgwrite.Drawing(
+            'draw-panel.svg', size=(self.width, self.height), profile='tiny', 
+            viewBox=('0 0 ' + str(self.width) + ' ' + str(self.height)),
+            preserveAspectRatio="xMidYMid meet")
 
-    def drawRectangle(self, r, outline_colour="black", outline_width=1, fill=None):
-        self.dwg.add(self.dwg.rect(insert=(r.tl.x, r.tl.y), size=(r.width(), r.height()), stroke=outline_colour, stroke_width=outline_width))
+    def drawRectangle(self, r, outline_colour="black", outline_width=1, fill='lightgray'):
+        self.dwg.add(self.dwg.rect(insert=(r.tl.x, r.tl.y), size=(
+            r.width(), r.height()), stroke=outline_colour, stroke_width=outline_width, fill=fill))
 
     def show(self):
         self.dwg.save()
@@ -170,19 +177,20 @@ class SVGPanelDisplay(PanelDisplay):
 OUTLINE_COLOURS = ["red", "blue", "magenta", "green"]
 
 
-def Draw(panelDisplay, r, depth=0, scalex=None, scaley=None, offset_pct = Fraction(5, 100)):
+def Draw(panelDisplay, r, depth=0, scalex=None, scaley=None, offset_pct=Fraction(5, 100)):
     if scalex == None:
         scalex = panelDisplay.width/r.width()
         scaley = panelDisplay.height/r.height()
     offsetx = scalex * offset_pct
     offsety = scaley * offset_pct
     drawr = Rectangle(Point(r.tl.x * scalex, r.tl.y * scaley),
-                  Point(r.br.x * scalex, r.br.y * scaley))
+                      Point(r.br.x * scalex, r.br.y * scaley))
     panelDisplay.drawRectangle(drawr, outline_colour=OUTLINE_COLOURS[depth], outline_width=(
         5-depth)*2)
     if r.hasCols or r.hasRows:
         for rc in r.children:
-            Draw(panelDisplay, rc, depth=(depth+1), scalex=scalex, scaley=scaley)
+            Draw(panelDisplay, rc, depth=(depth+1),
+                 scalex=scalex, scaley=scaley)
 
 
 if __name__ == "__main__":
@@ -196,5 +204,5 @@ if __name__ == "__main__":
     Draw(panelDisplay, r)
     panelDisplay.show()
 
-    window = webview.create_window('Woah dude!', 'index.html')
+    window = webview.create_window('Panelz: Make comic panels easily!', 'index.html')
     webview.start(http_server=True)
