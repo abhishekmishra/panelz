@@ -28,12 +28,13 @@ class Point:
 
 
 class Rectangle:
-    def __init__(self, tl=Point(0, 0), br=Point(1, 1)):
+    def __init__(self, tl=Point(0, 0), br=Point(1, 1), name="top"):
         self.tl = tl
         self.br = br
         self.children = []
         self.hasRows = False
         self.hasCols = False
+        self.name = name
 
     def width(self):
         return abs(self.br.x - self.tl.x)
@@ -52,7 +53,7 @@ class Rectangle:
                 # they return absolutes, we need sign as well here
                 h = (self.br.y - self.tl.y) * ratios[i]
                 self.children.append(
-                    Rectangle(start, Point(self.br.x, start.y + h)))
+                    Rectangle(start, Point(self.br.x, start.y + h), name = self.name + "_A" + str(i)))
                 start = Point(start.x, start.y + h)
         else:
             print(
@@ -70,7 +71,7 @@ class Rectangle:
                 # they return absolutes, we need sign as well here
                 w = (self.br.x - self.tl.x) * ratios[i]
                 self.children.append(
-                    Rectangle(start, Point(start.x + w, self.br.y)))
+                    Rectangle(start, Point(start.x + w, self.br.y), name = self.name + "_" + chr(ord('A') + i) + "0"))
                 start = Point(start.x + w, start.y)
         else:
             print(
@@ -97,7 +98,7 @@ class Rectangle:
         return self.children
 
     def __str__(self):
-        return "[ " + str(self.tl) + ", " + str(self.br) + " ]"
+        return self.name + " [ " + str(self.tl) + ", " + str(self.br) + " ]"
 
 
 class PanelDisplay:
@@ -187,6 +188,7 @@ def Draw(panelDisplay, r, depth=0, scalex=None, scaley=None, offset_pct=Fraction
                       Point(r.br.x * scalex, r.br.y * scaley))
     panelDisplay.drawRectangle(drawr, outline_colour=OUTLINE_COLOURS[depth], outline_width=(
         5-depth)*2)
+    print(r)
     if r.hasCols or r.hasRows:
         for rc in r.children:
             Draw(panelDisplay, rc, depth=(depth+1),
