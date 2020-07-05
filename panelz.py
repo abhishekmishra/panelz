@@ -1,15 +1,28 @@
-import numpy as np
+import logging
+#import numpy as np
 #import graphics as g
 from fractions import Fraction
 
 from wand.image import Image
 from wand.drawing import Drawing
 from wand.color import Color
-
 import svgwrite
-
 import webview
 
+from bottle import route, run, template
+import socket
+
+# @route('/hello/<name>')
+# def index(name):
+#     return template('<b>Hello {{name}}</b>!', name=name)
+
+# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# sock.bind(('localhost', 0))
+# port = sock.getsockname()[1]
+# sock.close()
+# run(host='localhost', port=port)
+
+logger = logging.getLogger(__name__)
 
 class Point:
     def __init__(self, x, y):
@@ -240,4 +253,4 @@ if __name__ == "__main__":
 
     window = webview.create_window(
         'Panelz: Make comic panels easily!', 'site/index.html')
-    webview.start(http_server=True)
+    webview.start(debug=True)
