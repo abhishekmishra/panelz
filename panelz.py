@@ -159,7 +159,7 @@ class SVGPanelDisplay(PanelDisplay):
     def __init__(self, width=400, height=600):
         super().__init__("Graphics Panel Display", width, height)
         self.dwg = svgwrite.Drawing(
-            'draw-panel.svg', size=(self.width, self.height), profile='tiny',
+            'site/draw-panel.svg', size=(self.width, self.height), profile='tiny',
             viewBox=('0 0 ' + str(self.width) + ' ' + str(self.height)),
             preserveAspectRatio="xMidYMid meet")
 
@@ -239,5 +239,5 @@ if __name__ == "__main__":
     panelDisplay.show()
 
     window = webview.create_window(
-        'Panelz: Make comic panels easily!', 'index.html')
+        'Panelz: Make comic panels easily!', 'site/index.html')
     webview.start(http_server=True)
