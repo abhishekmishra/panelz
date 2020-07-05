@@ -2,3 +2,4 @@ numpy
 Wand
 pywebview
 svgwrite
+bottle
