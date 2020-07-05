@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "panelz.net", "panelz.net\panelz.net.csproj", "{FED601AD-944F-4BB3-91FE-35773DDB3623}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FED601AD-944F-4BB3-91FE-35773DDB3623}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FED601AD-944F-4BB3-91FE-35773DDB3623}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FED601AD-944F-4BB3-91FE-35773DDB3623}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FED601AD-944F-4BB3-91FE-35773DDB3623}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9E8D20B8-E732-459B-B520-056D708ECD5E}
+	EndGlobalSection
+EndGlobal
